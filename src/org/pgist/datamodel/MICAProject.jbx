@@ -1,0 +1,12 @@
+[PropertyInfo]
+a_id,Long,false,false,a_id,a_id,true,<default>
+allCoordinates,double[],false,false, , ,true,<default>
+input_status,int,false,false,input_state,input_state,true,<default>
+pin,String,false,false,pin,pin,true,<default>
+project_id,Long,false,false,Project_ID,Project_ID,true,<default>
+project_title,String,false,false,project_title,project_title,true,<default>
+[IconNames]
+
+
+
+

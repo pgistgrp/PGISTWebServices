@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+<head>
+<title>LIT - Explore candidate projects</title>
+<script src="http://maps.google.com/maps?file=api&v=1&key=ABQIAAAADmWGO07Q7ZeAHCvFNooqIxT8LAKGhtP9maYhJLTjx4IxqGpsgRTey8zEXlF355TIxu1rYbhBNl_RdQ" type="text/javascript"></script>
+<script type='text/javascript' src='/pgistws/dwr/interface/ProjectServlet.js'></script>
+<script type='text/javascript' src='dwr/engine.js'></script>
+<script type='text/javascript' src='dwr/util.js'></script>
+<script type="text/javascript">
+  var projectList  = null;
+  var currentpage = 0;
+  function getProjects(){//startRow
+  	startrow = currentpage * parseInt($("selnumperpage").value);	
+	
+	$("prjlist").innerHTML = "<a style='background-color:#FF3300'>Loading data from PGIST databases ...</a>";
+  	
+	ProjectServlet.getProjects(displayProjects, $("selsort").value, $("selfilter").value, parseInt($("selnumperpage").value), startrow);  //startRow
+  }
+  
+  function displayProjects(data){
+	var content = "<table border=0 cellspacing=0 class=prjtable>";
+	for(i=0; i<data.length; i++){
+		content += "<tr><td class=prjindex><input type='checkbox' name='prjsel' value='" + data[i]['id'] + "' /> </td>";
+		content += "<td class=prjtitle><a class='voida' href='javascript:void(0)' onclick='displayProjectInfo(";
+		content += data[i]['id'] + ")'><b>" + data[i]['projectTitle'] + ":&nbsp;</b>" + data[i]['projectDesc'] + " (" + data[i]['sponsorLead'] + ")";
+		if($("selsort").value == "status")
+			content += "(" + data[i]['approvalStatus'] + ")</td></tr>" ;
+		else
+			content += "</a></td></tr>" ;
+	}
+		
+	content += "</table>";
+	DWRUtil.setValue("prjlist", content);
+	projectList = data;
+  }
+  
+  function setPage(n0){	
+	var pagination = "Page";
+	n = n0 +1;
+	totalp = Math.round( totalnumproj/parseInt($("selnumperpage").value) ) + 1;
+	if( n0 > totalp )n = totalp;  //in case total page number changs
+	
+	p = 1;
+	while(p <= totalp){
+		if(p == n)
+			pagination += '<b>' + p + '</b>&nbsp;';		
+		else if( (p < 5) || (n-2 <= p && p <= n+2 ) || (p > totalp-5) )
+			pagination += '<a href="javascript:void();" onclick="setPage(' + (p-1) + ')">' + p + '</a>&nbsp;';
+		else if(4<p && p<n-2){
+			pagination += '<a href="javascript:void();" onclick="setPage(' + (n-6) + ')"> ... </a>&nbsp;';
+			p = n-3;
+		}else if(n+2<p && p<totalp-5){
+			pagination += '<a href="javascript:void();" onclick="setPage(' + (n+4) + ')"> ... </a>&nbsp;';
+			p = totalp-5;
+		}
+			
+		p++;
+	}
+	
+	DWRUtil.setValue("pagination", pagination);
+	currentpage = n - 1;
+	getProjects();
+  }
+  
+	function createMarker(point, info)
+	{
+		var marker = new GMarker(point);
+		var html =  info;
+		GEvent.addListener(marker, "click", function() {marker.openInfoWindowHtml(info);});
+		return marker;
+	};
+  
+  var projects = new Array();
+  var map;
+  
+  function clearProjectData(){
+  	for(i=0; i<projects.length;i++){
+		projects[i][0] = null;	//marker
+		projects[i][1] = null; //project data
+	}
+  }
+  
+  function mapProject(id){
+    //<![CDATA[
+    //$("map").style.width="400px";
+    //$("map").style.height="250px";
+	if(map == null){
+		map = new GMap(document.getElementById("map"));
+		//map.addControl(new GSmallMapControl());
+		//map.addControl(new GMapTypeControl());
+		map.centerAndZoom(new GPoint(-122.3224667,47.65985278), 7);
+	}else {
+		$("map").style.visibility = "visible";
+	}
+	
+    //]]>
+  }
+  
+  function showMarkerInfo(i){
+  	projects[i][0].openInfoWindowHtml(projects[i][1]['project_title']);
+  }
+  
+  function displayProjectInfo(id){
+	var proj;
+	if(id == 0)scen = projectList[id];
+	
+	for(i=0; i<projectList.length; i++)
+		if(projectList[i]['id'] == id){
+			proj = projectList[i];
+			break;
+		}
+		
+	//make the scenario content to be displayed
+	projcontent = '<table width="100%" border="0" style="padding-top:10px;">';
+    projcontent += '<tr><td>';
+    
+	//if(activepane == 1){	//basic info
+		projcontent += '<br><b>Project title: </b>' + proj['projectTitle'] + "<br><br>";
+		projcontent += '<b>Project description: </b>' + proj['projectDesc'] + "<br><br>";
+		projcontent += '<b>Current fund total: </b>' + proj['curFundTotal'] + "<br><br>";
+		projcontent += '<b>Sponsor lead: </b>' + proj['sponsorLead'] + "<br><br>";
+		projcontent += '<b>Completion year: </b>' + proj['compDate'] + "<br><br>";
+		projcontent += '<b>Approval status: </b>' + proj['approvalStatus'] + "<br>";
+
+    projcontent += '</td></tr></table>';
+  	
+	DWRUtil.setValue("prjdatasgeet", projcontent);
+	//$('prjdetails').style.visibility='visible';
+	mapProject(0);
+	DWRUtil.setValue("prjoutcome", '<a target="_blank" href="http://localhost:8080/pgistws/project_attr.html">Project outcome objectives</a>');
+	loadProjectComments(0);
+  }
+  
+  function loadProjectComments(id){
+	DWRUtil.setValue("prjcomments", "Comments"); 	
+  }
+  
+  </script>
+<style type="text/css">
+<!--
+.portlettitle {
+	background-color: #FFDCA8;
+	margin: auto;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	border-top-color: #FF9853;
+	padding-left: 5px;
+}
+body {
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: small;
+}
+.prjindex {
+	text-align: center;
+	vertical-align: top;
+	background-color: #EEEEEE;
+	color: #330066;
+	border-top: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.prjtitle {
+	text-align: left;
+	vertical-align: top;
+	border-top: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 5px;
+}
+
+-->
+</style>
+<style type="text/css">
+<!--
+.prjlist {
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+}
+.prjtable {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCCCCC;
+}
+.voida {
+	color: #000000;
+	text-decoration: none;
+}
+-->
+</style>
+</head>
+<body>
+<p>PGIST user experiment - Let's improve transportation! </p>
+  <table width="100%" border="0">
+    <tr> 
+      
+    <td colspan="2" class="portlettitle"> <strong>Explore candidate projects</strong></td>
+    </tr>
+    <tr> 
+      
+    <td width="704" valign="top"><table width="100%" border="0">
+        <tr>
+          <td>Sort by 
+            <select id="selsort">
+              <option value="title" selected="selected">Project title</option>
+              <option value="fund">Total fund</option>
+              <option value="status">Approval status</option>
+              <option value="lead">Sponsor lead</option>
+              <option value="year">Completion year</option>
+            </select>
+            Filter 
+            <select id="selfilter">
+              <option value="all" selected="selected">All projects</option>
+              <option value="interested">Interested ones only</option>
+            </select>
+            Number per page
+            <select id="selnumperpage">
+              <option value="10">10</option>
+              <option value="25" selected="selected">25</option>
+              <option value="50">50</option>
+            </select>
+            <input type="button" name="refreshprjlist" value="Refresh" onclick="setPage(currentpage)" /></td>
+        </tr>
+        <tr>
+          <td><div id="prjlist"> </div></td>
+        </tr>
+        <tr>
+          <td align="right">
+<div id="pagination"></div></td>
+        </tr>
+        <tr>
+          <td><input type="button" name="selectinterested" value="Set selected projects as interested" />
+		  <input type="button" name="selectinterested" value="Remove selected from interested list" /></td>
+        </tr>
+      </table> 
+    <td width="400" valign="top">
+      <div id="prjdatasgeet" style="width:400px;"></div><br>
+      <div id="map" style="width: 400px; height: 250px;"></div><br>
+      <div id="prjoutcome" style="width:400px;"></div><br>
+      <div id="prjcomments" style="width:400px;"></div><br>
+	  
+     </td>
+    </tr>
+  </table>
+
+<script language="JavaScript">
+  var totalnumproj;
+  ProjectServlet.getProjectsTotal(setTotalNum);
+  function setTotalNum(data){
+  	totalnumproj = parseInt(data);
+	setPage(0);	
+  }
+  
+//loadScenarios();
+</script>
+</body>
+</html>

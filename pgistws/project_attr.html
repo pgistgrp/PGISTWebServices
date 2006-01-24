@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <script type='text/javascript' src='/pgistws/dwr/interface/VGOCServlet.js'></script>
+  <script type='text/javascript' src='/pgistws/dwr/engine.js'></script>
+  <script type='text/javascript' src='/pgistws/dwr/util.js'></script>
+  <script type="text/javascript">
+  var values = null;
+  
+  function createValue(){
+	VGOCServlet.createValue(postCreate, $("valuename").value,"",$("valuedescp").value);
+  }
+  function postCreate(data){
+  	alert("done...");
+  }
+  function createAttr(){
+	VGOCServlet.createAttribute(postCreate, $("attrname").value,0,$("attrdescp").value);
+  }
+  function createAttr4Val(){
+	VGOCServlet.createAttribute4Value(postCreate, $("attrname").value,0,$("attrdescp").value,$("valueid").value);
+  }
+  function fetchValues(){
+  	VGOCServlet.getAllValues(populateValues);
+  }
+  function populateValues(data){
+	values = data;
+	var content = "";
+	for(i=0;i<data.length; i++){
+		content += '<a href="javascript:void();" onclick="populateObjectives(' + data[i]['id'] + ')">' + data[i]['name'] + '</a> ';
+	}
+	DWRUtil.setValue("valuelist", content);
+  }
+  function populateObjectives(vid){
+  	if(values == null )return;
+	var index;
+	var content = "";
+	//find out the value for vid
+	for(i=0;i<values.length; i++){
+		if(values[i].id == vid){
+			index = i;
+			break;
+		}
+	}
+	
+	//display each objective
+	for(i=0;i<values[index]['objectives'].length; i++){
+		content += "<p>" + (i+1) + ". " + values[index]['objectives'][i]['samplequestion'] + "?</p>";
+		//alert(values[index]['objectives'][i]['attributes'].length);
+		for(k=0;k<values[index]['objectives'][i]['attributes'].length; k++){
+			content += makeAttrEdit(values[index]['objectives'][i]['attributes'][k], "");
+		}
+	}/**/
+	
+	DWRUtil.setValue(objpane, content);
+  }
+  
+  function makeAttrDisplay(attr){
+  	if(attr == null)return "Blank attribute.";
+	var content = "";
+	switch(-attr.dataType){
+		case 1:	//  yes/no
+			content += "<span class='attr'>" + attr.description + ":";
+			content += "<input type='radio' name='a" + attr.id + "' value='yes'>Yes ";
+			content += "<input type='radio' name='a" + attr.id + "' value='no'>No</span>";
+			break;
+		case 2:	// Integer: for coded values; read coded values first
+			
+			break;
+		case 4:	// Long
+			
+			break;
+		case 8:	// double
+			
+			break;
+		case 9:	//date
+			
+			break;
+		case 256:  //text
+			
+			break;		
+	}
+	return content;
+  }
+  
+  var attrId;
+  function makeAttrEdit(attr, val){
+  	if(attr == null)return "Blank attribute.";
+	var content = "<span class='attr'>" + attr.description + ":";
+	switch(-attr.dataType){
+		case 1:	//  yes/no
+			content += "<input type='radio' name='a" + attr.id + "'" + ((val=='1')?" checked":"") + ">Yes ";
+			content += "<input type='radio' name='a" + attr.id + "'" + ((val=='0')?" checked":"") + ">No";
+			break;
+		case 2:	// Integer: for coded values; read coded values first
+			//attrId = attr.id;
+			
+			//VGOCServlet.getValList(populateValList, attr.id);
+			//break;
+		case 4:	// Long
+		case 8:	// double
+			content += "<input type='text' size='15' name='a" + attr.id + "' value='" + val + "'>";
+			break;
+		case 256:  //text
+			content += "<input type='text' size='70' name='a" + attr.id + "' value='" + val + "'>";
+			break;		
+		case 9:	//date
+			content += "<input type='text' size='25' name='a" + attr.id + "' value='" + val + "'>(mm-dd-yyyy)";
+			break;
+	}
+	content += "</span>";
+	return content;  	
+  }
+  
+  function populateValList(data){
+  	//use data to populate attrId. data.measure_i; data.measure_x
+	if( $("a"+attrId) != null ){
+		DWRUtil.removeAllOptions("a"+attrId);
+		DWRUtil.addOptions("a"+attrId, data, 'measure_i','measure_x');
+	}
+  }
+  
+  </script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style title="text/css">
+body {
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: small;
+	padding-left:25px;
+	padding-right:25px;
+}
+</style>
+<title>Project explorer</title>
+</head>
+
+<body>
+<div id="prjdatasgeet" style="width:400px;">Project &lt;title&gt; outcome objectives</div>
+</p>
+<table width="100%" border="0">
+  <tr> 
+    <td><div id="valuelist">Getting list of values ...</div></td>
+    <td width="480" rowspan="2" valign="top">-Map: other projects compared to this one on this 
+      attribute <br>
+      -Other people think about this project, this attribute<br>
+      -Google search results on this indicator, this project </td>
+  </tr>
+  <tr> 
+    <td><div id="objpane"></div></td>
+  </tr>
+</table>
+<script type="text/javascript">
+fetchValues();
+</script>
+</body>
+</html>

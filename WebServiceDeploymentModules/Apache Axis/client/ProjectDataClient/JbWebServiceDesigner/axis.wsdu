@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebservicesDesigner autoScanAndExportSessionBeans="false"
+    isLiveSyncExportEnabled="true" preserveDeploymentState="false"
+    isLiveSyncImportEnabled="false"
+    autoScanAndExportMessageDrivenBeans="false"
+    autoValidateOnBuild="true" addWSDLToProjectOnBuild="true"
+    autoRefreshImportWsdl="false" autoRefreshImportUDDIService="false"
+    defaultClientGenerationWhileExport="true"
+    defaultServerGenerationWhileImport="false" enabled="true"
+    xsi:type="webserviceDesigner"
+    xmlns="http://www.borland.com/jbuilder/webservices/axis/designer/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <import>
+        <wsdl2java autoValidateOnBuild="true" enabled="true"
+            displayName="ProjectDataServices" internalId="1130721886218"
+            isLiveSyncImportEnabled="false" all="true" debug="false"
+            deployscope="Request" helpergen="true" noimports="false"
+            output="src" serverside="false" skeletondeploy="false"
+            testcase="true" testcaseoverwrite="false" timeout="0"
+            typemappingversion="1.1"
+            url="http://pgistdev.geog.washington.edu:8080/pgistws/services/ProjectServices?wsdl"
+            verbose="false" wrapped="true" packageforall="false" overWriteTypes="false">
+            <mapping namespace="http://datamodel.pgist.org" packagename="org.pgist.datamodel"/>
+            <mapping namespace="http://xml.apache.org/xml-soap" packagename="org.apache.xml.xml_soap"/>
+            <mapping namespace="http://www.w3.org/1999/XMLSchema" packagename="org.w3.www._1999.XMLSchema"/>
+            <mapping namespace="http://ws.pgist.org" packagename="org.pgist.ws"/>
+            <generatedFile file="../src/org/pgist/datamodel/TransportationProject.java"/>
+            <generatedFile file="../src/org/pgist/ws/ProjectServices.java"/>
+            <generatedFile file="../src/org/pgist/ws/ProjectServicesService.java"/>
+            <generatedFile file="../src/org/pgist/ws/ProjectServicesServiceLocator.java"/>
+            <generatedFile file="../src/org/pgist/ws/ProjectServicesSoapBindingStub.java"/>
+            <generatedFile file="../test/org/pgist/ws/ProjectServicesServiceTestCase.java"/>
+        </wsdl2java>
+    </import>
+    <export/>
+</WebservicesDesigner>

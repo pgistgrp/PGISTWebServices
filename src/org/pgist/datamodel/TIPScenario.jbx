@@ -1,0 +1,13 @@
+[PropertyInfo]
+author,String,false,false,author,author,true,<default>
+dataCreated,String,false,false,dataCreated,dataCreated,true,<default>
+description,String,false,false,Description,Description,true,<default>
+id,Long,false,false,id,id,true,<default>
+name,String,false,false,Name,Name,true,<default>
+projects,java.util.Set,false,false, , ,true,<default>
+sce_Id,String,false,false,Sce_Id,Sce_Id,true,<default>
+[IconNames]
+
+
+
+

@@ -1,0 +1,13 @@
+[PropertyInfo]
+authorId,Long,false,false,authorId,authorId,true,<default>
+authorType,Integer,false,false,authorType,authorType,true,<default>
+createDate,java.sql.Date,false,false,createDate,createDate,true,<default>
+description,String,false,false,description,description,true,<default>
+id,Long,false,false,id,id,true,<default>
+name,String,false,false,name,name,true,<default>
+attributes,com.sun.tools.javac.v8.util.List,false,false,attributes,attributes,true,<default>
+[IconNames]
+
+
+
+

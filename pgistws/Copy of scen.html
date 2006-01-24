@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+<head>
+<script type="text/javascript" src="file://///pgistdev.geog.washington.edu/d$/PGISTWEBAPPs/pgist1/xmlextras.js"></script>
+<script src="http://maps.google.com/maps?file=api&v=1&key=ABQIAAAADmWGO07Q7ZeAHCvFNooqIxT8LAKGhtP9maYhJLTjx4IxqGpsgRTey8zEXlF355TIxu1rYbhBNl_RdQ" type="text/javascript"></script>
+<script type='text/javascript' src='dwr/interface/MICAScenServlet.js'></script>
+<script type='text/javascript' src='dwr/engine.js'></script>
+<script type='text/javascript' src='dwr/util.js'></script>
+<script type="text/javascript">
+  function adjustSize(){
+	var winW = 630, winH = 460;
+	
+	if (parseInt(navigator.appVersion)>3) {
+	 if (navigator.appName=="Netscape") {
+	  winW = window.innerWidth;
+	  winH = window.innerHeight;
+	 }
+	 if (navigator.appName.indexOf("Microsoft")!=-1) {
+	  winW = document.body.offsetWidth;
+	  winH = document.body.offsetHeight;
+	 }
+	}
+	
+	if(winW > 720){	//the map should be at least xxx wide
+		document.getElementById("map").style.width = (winW - 400) + "px";
+	}
+  }
+  
+  function update(){
+  	MICAScenServlet.getScenarios(showScenario);
+  }
+  
+  function showScenario(data){
+    //for(var ss in data){
+	//	alert(data[ss].description);
+	//}
+	alert(data);
+	alert(data.length);
+	alert(data[0]);
+	alert(data[0]['description']);
+	//alert(data[0]['projects'].length);
+  }
+  
+  function getProjects4Scen(){
+	$("prjlist").innerHTML = "<a style='background-color:#FF3300'>Loading data from PGIST databases ...</a>";
+  	MICAScenServlet.getProjects4Scen(mapProjects, $("scennames").value);
+  }
+  
+	function createMarker(point, info)
+	{
+		var marker = new GMarker(point);
+		var html =  info;
+		GEvent.addListener(marker, "click", function() {marker.openInfoWindowHtml(info);});
+		return marker;
+	};
+  
+  var markers = new Array();
+  function mapProjects(data){
+	var content = "<table border=0 cellspacing=0 class=prjtable><tr><td colspan=2>There are " + data.length + " projects in this scenario.</td></tr>";
+	k=1;
+	var info = "";
+	for(i=0; i<data.length; i++){
+		content += "<tr><td class=prjindex>";
+		if(data[i]['allCoordinates'] != null){
+			content += "<a href='javascript:void(0)' onclick='showMarkerInfo(" + k + ")'/>" + k + "</a></td>";
+			point = new GPoint(data[i]['allCoordinates'][0],data[i]['allCoordinates'][1]);
+			k++;
+			markers[k] = createMarker(point, data[i]['project_title']);
+			map.addOverlay(markers[k]);
+		}
+		else
+			content += "&nbsp;</td>";
+		
+		content += "<td class=prjtitle>" + data[i]['project_title'] + "</td></tr>" ;
+		//
+		//	alert(data[i]['allCoordinates']);
+		//addProjectLine();
+		//addProjectMarker();
+		
+	}
+	content += "</table>";
+	DWRUtil.setValue("prjlist", content);
+  }
+  
+  function showMarkerInfo(i){
+  	markers[i].openInfoWindowHtml("Project");
+  }
+  
+  function loadScenarios(){
+  	MICAScenServlet.getScenarios(addScenarioNames);
+  }
+  function addScenarioNames(data){    
+    DWRUtil.removeAllOptions("scennames");
+	DWRUtil.addOptions("scennames", data, 'scen_ID','name');
+  }
+</script>
+<style type="text/css">
+<!--
+.portlettitle {
+	background-color: #CEDEFF;
+	margin: auto;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	border-top-color: #558CFF;
+}
+body {
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: small;
+}
+.prjindex {
+	text-align: center;
+	vertical-align: top;
+	background-color: #EEEEEE;
+	color: #330066;
+	border-top: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.prjtitle {
+	text-align: left;
+	vertical-align: top;
+	border-top: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 5px;
+}
+
+-->
+</style>
+<style type="text/css">
+<!--
+.prjlist {
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+}
+.prjtable {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCCCCC;
+}
+-->
+</style>
+</head>
+  <body onresize="adjustSize()">
+<p>PGIST user experiment - Let's improve transportation!
+  <input type="button" name="Submit" value="test" onclick="test()"/>
+</p>
+  <table width="100%" border="0">
+    <tr> 
+      <td colspan="2" class="portlettitle">&nbsp;</td>
+    </tr>
+    <tr> 
+      
+    <td width="68%" valign="top"> 
+      <div id="map" style="width: 640px; height: 480px;background-color: #6699CC;"></div></td>
+      
+    <td width="32%" valign="top">Select a MICA scenario to view the projects on 
+      the map.<br>
+<select id="scennames" style="width:280px" onchange="getProjects4Scen()">
+        </select>&nbsp;<input id="gogetprjlist" type="button" value="Go" onclick="getProjects4Scen()" /><div id="prjlist" class="prjlist"></div>
+      </td>
+    </tr>
+  </table>
+
+<p> 
+  <script type="text/javascript">
+    //<![CDATA[
+    var map = new GMap(document.getElementById("map"));
+    map.addControl(new GSmallMapControl());
+    map.addControl(new GMapTypeControl());
+    map.centerAndZoom(new GPoint(-122.3224667,47.65985278), 7);
+    //]]>
+    </script>
+  <!--input type="button" value="Map Overlays" onclick="mapoverlay()">
+    <input id="eventbutton" type="button" value="Make click input" onclick="makeclick()"-->
+  <br>
+  <script type="text/javascript">
+    function mapoverlay(){
+	// Center the map on UW
+	//var map = new GMap(document.getElementById("map"));
+	//map.addControl(new GSmallMapControl());
+	//map.addControl(new GMapTypeControl());
+	map.centerAndZoom(new GPoint(-122.3224667,47.65985278), 4);
+	
+	// Add 10 random markers in the map viewport using the default icon
+	var bounds = map.getBoundsLatLng();
+	var width = bounds.maxX - bounds.minX;
+	var height = bounds.maxY - bounds.minY;
+	for (var i = 0; i < 10; i++) {
+	  var point = new GPoint(bounds.minX + width * Math.random(),
+				bounds.minY + height * Math.random());
+	  var marker = new GMarker(point);
+	  map.addOverlay(marker);
+	}
+	
+	// Add a polyline with 4 random points. Sort the points by longitude so that
+	// the line does not intersect itself.
+	var points = [];
+	for (var i = 0; i < 5; i++) {
+	  points.push(new GPoint(bounds.minX + width * Math.random(),
+				bounds.minY + height * Math.random()));
+	}
+	points.sort(function(p1, p2) { return p1.x - p2.x; });
+	map.addOverlay(new GPolyline(points));    
+    }
+    
+    var clickmade = true;
+    var clicklistener = null;
+    function makeclick(){
+    	if(clickmade){
+		clicklistener = GEvent.addListener(map, 'click', function(overlay, point) {
+			map.addOverlay(new GMarker(point));
+			//alert("x=" + point.x + "; y=" + point.y);
+		});
+		document.getElementById("eventbutton").value = "Recover map interaction";
+		clickmade = false;
+	}else{
+		document.getElementById("eventbutton").value = "Make click input";	
+		clickmade = true;
+		GEvent.removeListener(clicklistener);
+	}
+	
+    }
+    
+    function addProject(){
+    	 map.addOverlay(new GPolyline(new Array(new GPoint(-120.362620885059,47.4743809460158), new GPoint(
+		-120.362206651404,47.4742926007563), new GPoint(
+		-120.344881425162,47.4698079472771), new GPoint(
+		-120.343893534053,47.4695618545997), new GPoint(
+		-120.343172355103,47.4693694061026), new GPoint(
+		-120.342529630767,47.4691556675714), new GPoint(
+		-120.341683393822,47.4688398374595), new GPoint(
+		-120.341333868459,47.4686874544596), new GPoint(
+		-120.340754678949,47.4683682715864), new GPoint(
+		-120.339799477262,47.4678526169025), new GPoint(
+		-120.339304274422,47.4675304165442), new GPoint(
+		-120.338760456544,47.4671190327359), new GPoint(
+		-120.338595165413,47.4669834135424), new GPoint(
+		-120.338760456544,47.4671190327359), new GPoint(
+		-120.338568846237,47.4672568312243), new GPoint(
+		-120.338170873474,47.4675805403252), new GPoint(
+		-120.337753957609,47.4679288922215), new GPoint(
+		-120.337363360921,47.4682495838373), new GPoint(
+		-120.337188179144,47.4684096781881), new GPoint(
+		-120.336793391505,47.4687270170426), new GPoint(
+		-120.336445374884,47.468933547137), new GPoint(
+		-120.336202802606,47.4690475410203), new GPoint(
+		-120.336013036318,47.4691328687947), new GPoint(
+		-120.335714472927,47.4692644646747), new GPoint(
+		-120.335542979188,47.4693087211235), new GPoint(
+		-120.33505012328,47.4694763591872), new GPoint(
+		-120.334773520475,47.469570571779), new GPoint(
+		-120.334672602361,47.4696061110485), new GPoint(
+		-120.334348725622,47.4696661254753), new GPoint(
+		-120.333825191949,47.4697610086193)), "#0000ff", 16, 0.5)); 
+			
+	point = new GPoint(-120.338595165413,47.4669834135424);
+	marker = new GMarker(point);
+	map.addOverlay(marker);
+	GEvent.addListener(marker, "click", function() {
+		marker.openInfoWindowHtml("Pavement Preservation for state route 2, section C.<br><img src=\"http://images.google.com/images?q=tbn:Wg182flIArQJ:vulcan.wr.usgs.gov/Volcanoes/MSH/May18/MSHThisWeek/42652/roadblock.jpg\" width=\"123\" height=\"92\">");
+	});
+	map.centerAndZoom(point, 3);
+    }
+   </script>
+</p>
+<p>&nbsp; </p>
+<script language="JavaScript">loadScenarios();</script>
+</body>
+</html>

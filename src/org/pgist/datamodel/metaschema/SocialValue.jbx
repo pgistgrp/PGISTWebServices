@@ -1,0 +1,11 @@
+[PropertyInfo]
+objectives,java.util.List,false,false, , ,true,<default>
+description,String,false,false,description,description,true,<default>
+id,Long,false,false,id,id,true,<default>
+name,String,false,false,name,name,true,<default>
+source,String,false,false,source,source,true,<default>
+[IconNames]
+
+
+
+

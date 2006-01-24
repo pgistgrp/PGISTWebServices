@@ -1,0 +1,75 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<title>Enabling Axis Administracion and SOAP monitoring features</title>
+<style type="text/css">
+BODY {
+	background-color : White;
+	color : Black;
+
+}
+
+H1 {
+	color : Navy;
+	font-family : sans-serif;
+ text-align : center;
+}
+DIV {
+	color : Navy;
+	font-family : sans-serif;
+ text-align : center;
+}
+</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h1>Apache Axis Admin Console</h1>
+
+<h2><a name="validate"></a>Validating Axis</h2>
+<p>If the "happyaxis" validation page displays an exception instead of a 
+status page, the likely cause is that you have multiple XML parsers on 
+your classpath. Clean up your classpath by eliminating extraneous parsers. </p>
+
+
+<h2><a name="admin"></a>Enabling Axis administration</h2>
+<p>To enable Axis administration, complete the following steps:</p>
+<ol>
+<li>Enable remote admin parameter under AdminService in the flow designer:<br/><code> &lt;parameter name="enableRemoteAdmin" value="true"/&gt;<code> </li>
+<li>Edit the <code>Web Services Server</code> Run configuration (Run->Configurations) and add vmparam to set the system property <code>axis.development.system</code></li>
+<li>Rebuild the project, restart the server or redeploy for the changes to take effect.</li>
+</ol>
+
+
+<h2><a name="soap"></a>Enabling SOAP monitoring features</h2>
+<p>To enable SOAP monitoring, complete the following steps:</p>
+<ol>
+<li>
+Add the code indicated in bold to the <code>globalConfiguration</code> element to the <code>axis.wsdd</code> deployment file in the project source path:
+
+  <pre>
+  &lt;globalConfiguration&gt;
+<strong>    &lt;requestFlow&gt;
+      &lt;handler type="java:org.apache.axis.handlers.JWSHandler"&gt;
+        &lt;parameter name="scope" value="session"/&gt;
+      &lt;/handler&gt;
+      &lt;handler type="java:org.apache.axis.handlers.JWSHandler"&gt;
+        &lt;parameter name="scope" value="request"/&gt;
+        &lt;parameter name="extension" value=".jwr"/&gt;
+      &lt;/handler&gt;
+      &lt;handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/&gt;
+    &lt;/requestFlow&gt;
+    &lt;responseFlow&gt;
+      &lt;handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/&gt;
+   &lt;/responseFlow&gt;
+</strong> &lt;/globalConfiguration&gt;
+  </pre>
+<p><strong>Note:</strong> The port used by the SOAP monitor service to comminicate with applets is configurable. Edit
+the <code>web.xml</code> file for the Axis web application to change the port to be used.</p>
+</li>
+<li>Rebuild the project, restart the server or redeploy for the changes to take effect.</li>
+</ol>
+</body>
+</html>

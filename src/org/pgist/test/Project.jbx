@@ -1,0 +1,20 @@
+[PropertyInfo]
+gridBagLayout1,java.awt.GridBagLayout,false,false, , ,false,<default>
+image1,javax.swing.ImageIcon,false,false, , ,false,<default>
+image2,javax.swing.ImageIcon,false,false, , ,false,<default>
+image3,javax.swing.ImageIcon,false,false, , ,false,<default>
+JButton1,javax.swing.JButton,false,false, , ,false,<default>
+JLabel1,javax.swing.JLabel,false,false, , ,false,<default>
+JLabel2,javax.swing.JLabel,false,false, , ,false,<default>
+JMenuBar1,javax.swing.JMenuBar,false,false, , ,false,<default>
+JMenuFile,javax.swing.JMenu,false,false, , ,false,<default>
+JMenuFileExit,javax.swing.JMenuItem,false,false, , ,false,<default>
+JMenuHelp,javax.swing.JMenu,false,false, , ,false,<default>
+JMenuHelpAbout,javax.swing.JMenuItem,false,false, , ,false,<default>
+JTextField1,javax.swing.JTextField,false,false, , ,false,<default>
+JTextField2,javax.swing.JTextField,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

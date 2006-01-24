@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="JB_Default_Task">
+    <taskdef name="java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask"/>
+    <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask"/>
+    <target name="JB_Default_Task">
+        <wsdl2java all="true" debug="false" helperGen="true"
+            noimports="false"
+            testCaseOutputDirectory="D:/PGISTWebServices/classes/ws-gen/test/1130722545609-Project"
+            output="D:/PGISTWebServices/classes/ws-gen/src/1130722545609-Project"
+            serverside="false" skeletonDeploy="false" testcase="true"
+            testcaseoverwrite="false" timeout="0"
+            typeMappingVersion="1.1"
+            url="http://pgistdev.geog.washington.edu:8080/pgistws/services/ProjectServices?wsdl"
+            verbose="false" noWrapped="false" overWriteTypes="false">
+            <mapping namespace="http://datamodel.pgist.org" package="org.pgist.datamodel"/>
+            <mapping namespace="http://xml.apache.org/xml-soap" package="org.apache.xml.xml_soap"/>
+            <mapping namespace="http://www.w3.org/1999/XMLSchema" package="org.w3.www._1999.XMLSchema"/>
+            <mapping namespace="http://ws.pgist.org" package="org.pgist.ws"/>
+        </wsdl2java>
+    </target>
+</project>

@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <script type='text/javascript' src='/pgistws/dwr/interface/VGOCServlet.js'></script>
+  <script type='text/javascript' src='/pgistws/dwr/engine.js'></script>
+  <script type='text/javascript' src='/pgistws/dwr/util.js'></script>
+  <script type="text/javascript">
+  function createValue(){
+	VGOCServlet.createValue(postCreate, $("valuename").value,"",$("valuedescp").value);
+  }
+
+  function createObjective(){
+  	if( parseInt( $("objectivevid").value ) > 0 ){
+		VGOCServlet.createObjective4Value(postCreate, $("objectivename").value, $("objectivedescp").value, $("objectivesq").value, parseInt( $("objectivevid").value ) );
+	}
+	else{
+		VGOCServlet.createObjective(postCreate, $("objectivename").value, $("objectivedescp").value, $("objectivesq").value );
+	}
+  }
+  
+  function createAttr(){
+  	if( parseInt( $("attroid").value ) > 0 ){
+		VGOCServlet.createAttribute4Objective(postCreate, 
+			$("attrname").value,
+			$("attrdatatype").value,
+			$("attrdescp").value,
+			parseInt( $("attroid").value ));
+	}
+	else{
+		VGOCServlet.createAttribute(postCreate, 
+			$("attrname").value,
+			$("attrdatatype").value,
+			$("attrdescp").value );
+	}
+  }
+
+  function postCreate(data){
+	//if(data == null)alert("Null returned.");
+/*	$("attrname").value = "";
+	$("attrdatatype").value = "";
+	$("attrdescp").value = "";
+	
+	$("objectivename").value = "";
+	$("objectivedescp").value  = "";
+	$("objectivesq").value = "";
+*/	
+	fetchValues();
+  }
+
+  function fetchValues(){
+	VGOCServlet.getAllValues(populateValues);
+  }
+  
+  function populateValues(data){
+	var content = "";
+	for(i=0;i<data.length; i++){
+		content += '<a href="javascript:void();">' + data[i]['name'] + ' (id=' + data[i]['id'] + ')</a> ' +
+		   			'<input type="button" value="delete" onclick="deleteItem(1, ' + data[i]['id'] + ')"><br>';
+		
+		//populate objectives
+		if(data[i]['objectives'] != null){
+			for(j=0;j<data[i]['objectives'].length; j++){
+				content += '<li>' + data[i]['objectives'][j].name + ' (id=' + data[i]['objectives'][j].id + 
+				 ')<input type="button" value="delete" onclick="deleteItem(2, ' + data[i]['objectives'][j].id + ')"></li>';
+				if(data[i]['objectives'][j]['attributes'] != null){
+					for(k=0;k<data[i]['objectives'][j]['attributes'].length; k++){
+						if( data[i]['objectives'][j]['attributes'][k] != null)
+						content += "<input type='checkbox' id='" + data[i]['objectives'][j]['attributes'][k].id + "'>" + data[i]['objectives'][j]['attributes'][k].name + "<br>";
+					}
+				}
+			}
+		}
+	}
+	
+	DWRUtil.setValue("valuelist", content);
+  }
+  
+  function deleteItem(type, id){
+  	if(type == 1){
+		VGOCServlet.deleteItem(postCreate,"SocialValue", id);
+	}else if( type == 2){
+		VGOCServlet.deleteItem(postCreate,"Objective", id);
+	}
+  }
+  
+  function loadEntities(){
+  	VGOCServlet.getAllTables(addAttr2Entity);
+  }
+  function addAttr2Table(){
+    DWRUtil.removeAllOptions("tablelist");
+	DWRUtil.addOptions("tablelist", data, 'id','name');
+  }
+  </script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Schema management</title>
+</head>
+
+<body>
+<p>This page can be used to manage all values, objectives, and criteria (attributes).<br>
+</p>
+Operations:<br>
+<table width="100%" border="1">
+  <tr> 
+    <td>New value: Name: 
+      <input type="text" id="valuename">
+      Description: 
+      <input type="text" id="valuedescp" size="50">
+      <input type="button" name="Submit5" value="add" onClick="createValue()"></td>
+  </tr>
+  <tr> 
+    <td>New Objective: Name: 
+      <input type="text" id="objectivename">
+      Description: 
+      <input type="text" id="objectivedescp" size="50">
+      Sample question: 
+      <input name="text2" type="text" id="objectivesq" size="50">
+      Value ID
+      <input type="text" name="textfield" id="objectivevid"> 
+      <input type="button" name="Submit5" value="add" onClick="createObjective()"></td>
+  </tr>
+  <tr>
+    <td> 
+      <p> New attribute: Name: 
+        <input name="text" type="text" id="attrname">
+        Description: 
+        <input name="text" type="text" id="attrdescp" size="50">
+        Datatype: 
+        <select name="select" id="attrdatatype">
+          <option value="-1">Yes/No</option>
+          <option value="-2">Integer</option>
+          <option value="-4">Long</option>
+          <option value="-8">Double</option>
+          <option value="-9">Time/Date</option>
+          <option value="-256" selected>Text</option>
+        </select>
+        Objective ID: 
+        <input type="text" id="attroid">
+        <input type="submit" name="Submit4" value="add" onClick="createAttr()">
+      </p>
+      </td>
+  </tr>
+  <tr>
+    <td>New table:
+      <input id="tablename" type="text" name="tablename">
+      Description: 
+      <input id="tabledescp" type="text" size="50">
+      <input type="button" name="Submit42" value="add" onClick="createTable()"></td></tr>
+</table>
+<p>Values, goals and criteria: 
+</p>
+<div id="valuelist"></div>
+<p>
+  <script type="text/javascript">
+fetchValues();
+</script>
+</p>
+<p> 
+  <select name="select2" id="tablelist">
+  </select>
+  <input type="button" name="Submit" value="Add selected attributes to this table" onclick="addAttr2Table()">
+</p>
+</body>
+</html>

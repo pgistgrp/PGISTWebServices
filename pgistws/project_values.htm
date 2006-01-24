@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <script type='text/javascript' src='/pgistws/dwr/interface/VGOCServlet.js'></script>
+  <script type='text/javascript' src='/pgistws/dwr/engine.js'></script>
+  <script type='text/javascript' src='/pgistws/dwr/util.js'></script>
+  <script type="text/javascript">
+  function createValue(){
+	VGOCServlet.createValue(postCreate, $("valuename").value,"",$("valuedescp").value);
+  }
+  function postCreate(data){
+  	alert("done...");
+  }
+  function createAttr(){
+	VGOCServlet.createAttribute(postCreate, $("attrname").value,0,$("attrdescp").value);
+  }
+  function createAttr4Val(){
+	VGOCServlet.createAttribute4Value(postCreate, $("attrname").value,0,$("attrdescp").value,$("valueid").value);
+  }
+  function fetchValues(){
+  	VGOCServlet.getAllValues(populateValues);
+  }
+  function populateValues(data){
+  	alert(data);
+	alert(data.length);
+	var content = "";
+	for(i=0;i<data.length; i++){
+		content += '<a href="javascript:void();">' + data[i]['name'] + '</a> ';
+	}
+	DWRUtil.setValue("valuelist", content);
+  }
+  
+  </script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>无标题文档</title>
+</head>
+
+<body>
+<p>when a project is loaded through DWR, all attributes are accessible through 
+  JS. a display function can be used to generate the display; an edit function 
+  can be used to generate a editing interface to take values, a commit function 
+  can be used to send the results to the server for update.</p>
+<p>&nbsp;</p>
+<p> Edit mode can be enabled only when the user has privilege.<br>
+</p>
+<table width="100%" border="0">
+  <tr> 
+    <td><div id="valuelist"></div>| 
+      <a href="javascript:void();"> Economic</a> <a href="javascript:void();">Environment</a> 
+      <a href="javascript:void();">Cost</a> 
+      <input type="button" name="Submit5" value="add another value" onClick="createValue()">
+      Name: 
+      <input type="text" id="valuename">
+      Description: 
+      <input type="text" id="valuedescp" size="50"></td>
+  </tr>
+  <tr>
+    <td><p>1. Does the proposed project increase the transportation system's operation 
+        by:<br>
+        Addressing an existing maintenance deficiency?(edit mode) 
+        <input type="radio" name="radiobutton" value="radiobutton">
+        Yes 
+        <input type="radio" name="radiobutton" value="radiobutton">
+        No. If yes, how? 
+        <input name="textfield" type="text" size="50">
+        <br>
+        Utilizing existing resources more efficiently? (read mode) Yes. Currently 
+        XXX is not efficiently used. 
+        <input type="submit" name="Submit2" value="comment">
+        <input type="submit" name="Submit3" value="different answer">
+      </p>
+      <p>2. ...</p>
+      <p> 
+        <input type="submit" name="Submit" value="Modify these values">
+        <input type="submit" name="Submit4" value="Add another criteria" onClick="createAttr()">
+        Name: 
+        <input name="text" type="text" id="attrname">
+        Description: 
+        <input name="text" type="text" id="attrdescp" size="50">
+        ValueID: 
+        <input type="text" id="valueid" value="1">
+        <input type="button" name="Submit6" value="Criteria for value" onClick="createAttr4Val()">
+      </p>
+      </td>
+  </tr>
+</table>
+<script type="text/javascript">
+fetchValues();
+</script>
+</body>
+</html>

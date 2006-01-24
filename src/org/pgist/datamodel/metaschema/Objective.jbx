@@ -1,0 +1,16 @@
+[PropertyInfo]
+attributes,java.util.List,false,false,criteria,criteria,true,<default>
+authorid,Long,false,false,authorid,authorid,true,<default>
+authortype,String,false,false,authortype,authortype,true,<default>
+createdate,java.sql.Date,false,false,createdate,createdate,true,<default>
+description,String,false,false,description,description,true,<default>
+id,Long,false,false,id,id,true,<default>
+name,String,false,false,name,name,true,<default>
+positive,Integer,false,false,positive,positive,true,<default>
+samplequestion,String,false,false,samplequestion,samplequestion,true,<default>
+values,java.util.List,false,false,values,values,true,<default>
+[IconNames]
+
+
+
+

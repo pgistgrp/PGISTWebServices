@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+<head>
+<script src="http://maps.google.com/maps?file=api&v=1&key=ABQIAAAADmWGO07Q7ZeAHCvFNooqIxT8LAKGhtP9maYhJLTjx4IxqGpsgRTey8zEXlF355TIxu1rYbhBNl_RdQ" type="text/javascript"></script>
+<script type='text/javascript' src='dwr/interface/MICAScenServlet.js'></script>
+<script type='text/javascript' src='dwr/engine.js'></script>
+<script type='text/javascript' src='dwr/util.js'></script>
+<script type="text/javascript">
+  var scenarioList  = null;
+  var activepane = 1;
+  var projects = new Array();
+  
+  function adjustSize(){
+	var winW = 630, winH = 460;
+	
+	if (parseInt(navigator.appVersion)>3) {
+	 if (navigator.appName=="Netscape") {
+	  winW = window.innerWidth;
+	  winH = window.innerHeight;
+	 }
+	 if (navigator.appName.indexOf("Microsoft")!=-1) {
+	  winW = document.body.offsetWidth;
+	  winH = document.body.offsetHeight;
+	 }
+	}
+	
+	if(winW > 720){	//the map should be at least xxx wide
+		document.getElementById("map").style.width = (winW - 400) + "px";
+	}
+  }
+  
+  function update(){
+  	MICAScenServlet.getScenarios(showScenario);
+  }
+    
+  function getProjects4Scen(){
+	$("prjlist").innerHTML = "<a style='background-color:#FF3300'>Loading data from PGIST databases ...</a>";
+  	MICAScenServlet.getProjects4Scen(mapProjects, $("scennames").value);
+  }
+  
+	function createMarker(point, info)
+	{
+		var marker = new GMarker(point);
+		var html =  info;
+		GEvent.addListener(marker, "click", function() {marker.openInfoWindowHtml(info);});
+		return marker;
+	};
+  
+  function adjustMapExtent(minLong, maxLong, minLat,maxLat){
+	var center = new GPoint( (maxLong+minLong)/2, (maxLat+minLat)/2 );
+	var delta = new GSize( maxLong-minLong, maxLat-minLat);
+	
+	var minZoom = map.spec.getLowestZoomLevel(center, delta, map.viewSize);
+	
+	map.centerAndZoom(center, minZoom); 
+  }
+  
+  function mapProjects(data){
+	map.clearOverlays();
+    var minLong = 200, minLat = 100, maxLong = -200, maxLat = 0;
+	
+	var content = "<table border=0 cellspacing=0 class=prjtable><tr><td colspan=2>There are " + data.length + " projects in this scenario.</td></tr>";
+	k=1;
+	for(i=0; i<data.length; i++){
+		if(data[i]['allCoordinates'] != null){
+			content += "<tr onclick='showMarkerInfo(" + k + ")'>";
+			content += "<td class=prjindex><a href='javascript:void(0)'/>" + k + "</a></td>";
+			content += "<td class=prjtitle><a href='javascript:void(0)'/>" + data[i]['project_title'] + "</a></td></tr>" ;
+			m = data[i]['allCoordinates'].length/2;
+			if( (m % 2) !=0 )m--;
+			point = new GPoint(data[i]['allCoordinates'][m],data[i]['allCoordinates'][m+1]);
+			projects[k] = new Array(2);
+			projects[k][0] = createMarker(point, data[i]['project_title']);
+			projects[k][1] = data[i];
+			map.addOverlay(projects[k][0]);
+			
+			k++;
+			
+			for(j=0;j<data[i]['allCoordinates'].length;j=j+2){
+				if(data[i]['allCoordinates'][j] < minLong) minLong = data[i]['allCoordinates'][j];
+				if(data[i]['allCoordinates'][j] > maxLong) maxLong = data[i]['allCoordinates'][j];
+				if(data[i]['allCoordinates'][j+1] < minLat) minLat = data[i]['allCoordinates'][j+1];
+				if(data[i]['allCoordinates'][j+1] > maxLat) maxLat = data[i]['allCoordinates'][j+1];
+			}
+		}
+		else{
+			content += "<tr><td class=prjindex>&nbsp;</td>";
+			content += "<td class=prjtitle>" + data[i]['project_title'] + "</td></tr>" ;
+		}
+		
+	}
+	content += "</table>";
+	DWRUtil.setValue("prjlist", content);
+	adjustMapExtent(minLong, maxLong, minLat,maxLat);
+  }
+  
+  function showMarkerInfo(i){
+  	projects[i][0].openInfoWindowHtml(projects[i][1]['project_title']);
+  }
+  
+  function loadScenarios(){
+  	MICAScenServlet.getScenarios(addScenarioNames);
+  }
+  
+  function addScenarioNames(data){    
+    DWRUtil.removeAllOptions("scennames");
+	DWRUtil.addOptions("scennames", data, 'scen_ID','name');
+	scenarioList = data;
+	displayScenarioInfo(0);
+  }
+  
+  function displayScenarioInfo(id){
+	var scen;
+	if(id == 0)scen = scenarioList[id];
+	
+  	//scen_Id is not the index number
+	wanted = parseInt( $("scennames").value );
+	for(i=0; i<scenarioList.length; i++)
+		if(scenarioList[i]['scen_ID'] == wanted){
+			scen = scenarioList[i];
+			break;
+		}
+		
+	//make the scenario content to be displayed
+	scencontent = '<table width="100%" border="0" style="padding-top:15px;">';
+	scencontent += '<tr><td><a id="scenpane1" href="javascript:void()" onclick="activatePane(1);">Basic info</a>&nbsp;';
+    scencontent += '<a id="scenpane2" href="javascript:void()" onclick="activatePane(2);">Criteria</a>&nbsp;';
+    scencontent += '<a id="scenpane3" href="javascript:void()" onclick="activatePane(3);">Assumptions</a>&nbsp;';
+    scencontent += '<a id="scenpane4" href="javascript:void()" onclick="activatePane(4);">Discussion</a></td>';
+    scencontent += '</tr>';
+    scencontent += '<tr><td>';
+    
+	if(activepane == 1){	//basic info
+		scencontent += '<b>Scenario name: </b>' + scen['name'] + "<br>";
+		scencontent += '<b>Descrption: </b>' + scen['description'] + "<br>";
+		scencontent += '<b>Created by: </b>' + scen['author'] + "<br>";
+		scencontent += '<b>Date created: </b>' + scen['date_created'] + "<br>";
+	}else if(activepane == 2){  //criteria
+		scencontent += '<b>Benefit Cost Ratio: </b>' + scen['bcr_min'] + "<br>";
+		scencontent += '<b>Safety Benefits: </b>' + scen['safe_ben_min'] + "<br>";
+		scencontent += '<b>Travel Time Savings: </b>' + scen['tt_ben_min'] + "<br>";
+		scencontent += '<b>User Cost Savings: </b>' + scen['user_ben_min'] + "<br>";	
+		scencontent += '<b>Environmental Benefits: </b>' + scen['env_ben_min'] + "<br>";
+		scencontent += '<b>Score for System Operation and Maintenance: </b>' + scen['sys_om_min'] + "<br>";	
+		scencontent += '<b>Score for System Preservation: </b>' + scen['sys_pres_min'] + "<br>";
+		scencontent += '<b>Score for Special Needs Transportation: </b>' + scen['sp_needs_min'] + "<br>";	
+		scencontent += '<b>Score for Congestion Relief: </b>' + scen['cong_rel_min'] + "<br>";
+		scencontent += '<b>Score for Increased Travel Options: </b>' + scen['trav_opt_min'] + "<br>";	
+		scencontent += '<b>Score for Seamless Connections: </b>' + scen['seamless_min'] + "<br>";
+		scencontent += '<b>Score for Safety: </b>' + scen['safety_min'] + "<br>";	
+		scencontent += '<b>Score for Security: </b>' + scen['security_min'] + "<br>";
+		scencontent += '<b>Score for Community Based Design: </b>' + scen['commnty_min'] + "<br>";	
+		scencontent += '<b>Score for Collaborative Decision Making: </b>' + scen['collab_min'] + "<br>";
+		scencontent += '<b>Score for Freight Movement: </b>' + scen['freight_min'] + "<br>";	
+		scencontent += '<b>Score for Economic Prosperity: </b>' + scen['econ_pros_min'] + "<br>";
+		scencontent += '<b>Score for Tourism: </b>' + scen['tourism_min'] + "<br>";	
+		scencontent += '<b>Score for Air Quality: </b>' + scen['air_qual_min'] + "<br>";
+		scencontent += '<b>Score for Water Quality: </b>' + scen['wtr_qual_min'] + "<br>";	
+		scencontent += '<b>Score for Habitat/Watersheds/Connectivity: </b>' + scen['habitat_min'] + "<br>";
+		scencontent += '<b>Score for Use of Resources: </b>' + scen['resource_min'] + "<br>";	
+	}else if(activepane == 3){ //assumptions
+		scencontent += '<b>Scenario assumptions ...</b>';
+	}else if(activepane == 4){ //discussion
+		scencontent += '<b>Dicsourse object - senario as root </b>';
+	}
+
+    scencontent += '</td></tr></table>';
+  	
+	DWRUtil.setValue("sceninfo", scencontent);
+	
+  }
+  
+  function activatePane(pane){
+  	 activepane = pane;
+	 
+	 displayScenarioInfo(-1);
+	 
+	 for(i=1;i<=4;i++){
+		if(activepane == i) document.getElementById("scenpane"+i).className = "activepane";
+		else document.getElementById("scenpane"+i).className = null;
+	 }
+  }
+  
+</script>
+<style type="text/css">
+<!--
+.portlettitle {
+	background-color: #CEDEFF;
+	margin: auto;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	border-top-color: #558CFF;
+	padding-left: 5px;
+}
+body {
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: small;
+}
+.prjindex {
+	text-align: center;
+	vertical-align: top;
+	background-color: #EEEEEE;
+	color: #330066;
+	border-top: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 5px;
+}
+.prjtitle {
+	text-align: left;
+	vertical-align: top;
+	border-top: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 5px;
+}
+
+-->
+</style>
+<style type="text/css">
+<!--
+.prjlist {
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+}
+.prjtable {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCCCCC;
+}
+.activepane {
+	background-color: #DDE8FF;
+	padding-right: 3px;
+	padding-left: 3px;
+}
+-->
+</style>
+</head>
+  <body onresize="adjustSize()">
+<p>PGIST user experiment - Let's improve transportation! </p>
+  <table width="100%" border="0">
+    <tr> 
+      
+    <td colspan="2" class="portlettitle"><strong>Review programming scenario</strong></td>
+    </tr>
+    <tr> 
+      
+    <td width="68%" valign="top"> 
+      <div id="map" style="width: 640px; height: 480px;background-color: #6699CC;"></div>
+	  <div id="sceninfo"></div>
+	  </td>
+      
+    <td width="32%" valign="top">Select a MICA scenario to view the projects on 
+      the map.<br>
+      <select name="select" id="scennames" style="width:280px" onchange="getProjects4Scen();displayScenarioInfo( -1 )">
+      </select> &nbsp; 
+      <input id="gogetprjlist" type="button" value="Go" onclick="getProjects4Scen()" /><div id="prjlist" class="prjlist"></div>
+      </td>
+    </tr>
+  </table>
+
+  <script type="text/javascript">
+    //<![CDATA[
+    var map = new GMap(document.getElementById("map"));
+    map.addControl(new GSmallMapControl());
+    map.addControl(new GMapTypeControl());
+    map.centerAndZoom(new GPoint(-122.3224667,47.65985278), 7);
+    //]]>
+    </script>
+  <br>
+<p>&nbsp; </p>
+<script language="JavaScript">
+loadScenarios();
+adjustSize();
+</script>
+</body>
+</html>

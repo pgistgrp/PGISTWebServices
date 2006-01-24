@@ -1,0 +1,19 @@
+[PropertyInfo]
+approvalStatus,String,false,false,approvalStatus,approvalStatus,true,<default>
+compDate,String,false,false,compDate,compDate,true,<default>
+curFundTotal,Double,false,false,CurrentFundTotal,CurrentFundTotal,true,<default>
+fromLoc,String,false,false,FromLoc,FromLoc,true,<default>
+id,Long,false,false, , ,true,<default>
+projectDesc,String,false,false,projectDesc,projectDesc,true,<default>
+projectId,String,false,false, , ,true,<default>
+projectTitle,String,false,false, , ,true,<default>
+scenarios,java.util.Set,false,false, , ,true,<default>
+spatial,String,false,false, , ,true,<default>
+sponsorLead,String,false,false,sponsor,sponsor,true,<default>
+sponsorProjectId,String,false,false,sponsorProjId,sponsorProjId,true,<default>
+toLoc,String,false,false,ToLoc,ToLoc,true,<default>
+[IconNames]
+
+
+
+

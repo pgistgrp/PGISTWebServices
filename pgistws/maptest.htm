@@ -1,0 +1,166 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>MapBar Perspective</title>
+<script type="text/javascript" src="map_v1.js"></script>
+<script language="JavaScript" type="text/JavaScript">
+var scenarioids = "";
+function refreshscenmap(){
+	var scennames = document.getElementById("scennames");
+	var start = true;
+	scenarioids = "";
+	for(var i=0; i<scennames.length; i++){
+		if(scennames[i].selected)
+			if(start){
+				scenarioids = scennames[i].value;
+				start = false;
+			}else
+				scenarioids += "," + scennames[i].value;
+	}
+	zoomedtimes++;
+	var s = "&optimes=" + zoomedtimes;
+	if(scenarioids!="")s += "&sids=" + scenarioids;
+	document.getElementById("theImage").src = "getMap?w=640&h=480" + s;
+}
+
+function refreshlegend(){
+	zoomedtimes++;
+	var s = "&optimes=" + zoomedtimes;
+	if(scenarioids!="")s += "&sids=" + scenarioids;
+	document.getElementById("legendimage").innerHTML = '<img src="'+ "getMap?legend=yes" + s + '">';
+}
+
+var zoomedtimes = 0;
+function zoommap(op){
+	zoomedtimes++;
+	var s = "&optimes=" + zoomedtimes;
+	if(scenarioids!="")s += "&sids=" + scenarioids;
+	if(op==1){         //zoom in
+		document.getElementById("theImage").src = "getMap?w=640&h=480&x0=320&y0=240&nv=zoomin" + s;
+	}else{
+		document.getElementById("theImage").src = "getMap?w=640&h=480&x0=320&y0=240&nv=zoomout" + s;
+	}
+}
+
+</script>
+<script language="JavaScript" type="text/JavaScript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+</head>
+<body style="margin: 0px;">
+<div id="Layer1" style="position:absolute; left:0px; top:0px; width:640px; height:480px; z-index:0; background-color: #FFFFFF; layer-background-color: #FFFFFF; border: 1px solid #CCCCCC;"></div>
+<div id="scenariolist" style="position:absolute; left:676px; top:63px; width:184px; height:306px; z-index:1"> 
+  Scenario list:<br>
+    <select name="select" id="scennames" style="width: 120px;" size="20" multiple>
+      <option value="43">Scenario A</option>
+      <option value="44">Scenario B</option>
+      <option value="45">Scenario C</option>
+      <option value="46">Scenario D</option>
+      <option value="47">Scenario E</option>
+      <option value="50">Scenario F</option>
+      <option value="51">Scenario G</option>
+      <option value="52">Scenario H</option>
+      <option value="53">Scenario I</option>
+      <option value="54">Scenario J</option>
+      <option value="66">All Projects</option>
+      <option value="67">A - 50%</option>
+      <option value="68">A - 25%</option>
+      <option value="69">B - 50%</option>
+      <option value="70">B - 25%</option>
+      <option value="71">C - 50%</option>
+      <option value="72">C - 25%</option>
+      <option value="73">D - 50%</option>
+      <option value="74">D - 25%</option>
+      <option value="81">mike</option>
+      <option value="83">Jordan</option>
+      <option value="84">Jordan2</option>
+      <option value="85">Testing 123</option>
+      <option value="86">test</option>
+      <option value="87">test2</option>
+      <option value="88">test3</option>
+      <option value="89">tt</option>
+      <option value="90">tt</option>
+    </select>
+  <p>
+    <input type="button" name="Submit" value="Refresh map" onClick="refreshscenmap()">
+  </p>
+</div>
+<div id="Layer3" style="position:absolute; left:5px; top:492px; width:504px; height:64px; z-index:2"> 
+  Image URL:<br>
+  <textarea id="imageurldisp" cols="80"></textarea>
+</div>
+<div id="legendpane" style="position:absolute; left:891px; top:63px; width:266px; height:514px; z-index:4">
+<table width="100%" border="0">
+    <tr>
+      <td> 
+          <input type="button" name="Submit3" value="Zoom in" onClick="zoommap(1)" style="width:150px">
+        <br>
+        <input type="button" name="Submit32" value="Zoom out" onClick="zoommap(-1)" style="width:150px">
+        <br>
+        <input type="button" onClick="refreshlegend()" name="Submit2" value="Show/Refresh legend" style="width:150px">
+        </td>
+    </tr>
+    <tr>
+      <td id="legendimage">&nbsp;</td>
+    </tr>
+  </table>
+</div>
+<div id="Layer2" style="position:absolute; left:675px; top:5px; width:276px; height:36px; z-index:5">Drag 
+  the image to see more areas.</div>
+<script type="text/javascript" language="JavaScript" >
+  var hspc = 0;
+  var vspc = 0;
+    
+	var sMapProcessor;
+	var sIDProcessor;
+	var sImage;
+	
+	// map size
+	var iWidth=640; //640;
+	var iHeight=480; //454;
+	
+	// map extent.
+	var minx;
+	var maxx;
+	var maxy;
+	var miny;
+
+    content = '<img id="theImage" src="getMap?w=640&h=480" border="0" hspace=0 vspace=0 border=0 width=' + iWidth + ' height=' + iHeight + '>';
+    createLayer("theMap",hspc,vspc,(parseInt(iWidth)+2),(parseInt(iHeight)+2),true,content);
+    
+    // needed so that pan works
+    clipLayer("theMap",0,0,(parseInt(iWidth)+2),(parseInt(iHeight)+2));
+
+	// Zoom Box
+	content = '<img name="zoomImageTop" src="images/transparent.gif" width=1 height=1>';
+	createLayer("zoomBoxTop",hspc,vspc,iWidth,iHeight,false,content);
+	content = '<img name="zoomImageLeft" src="images/transparent.gif" width=1 height=1>';
+	createLayer("zoomBoxLeft",hspc,vspc,iWidth,iHeight,false,content);
+	content = '<img name="zoomImageRight" src="images/transparent.gif" width=1 height=1>';
+	createLayer("zoomBoxRight",hspc,vspc,iWidth,iHeight,false,content);
+	content = '<img name="zoomImageBottom" src="images/transparent.gif" width=1 height=1>';
+	createLayer("zoomBoxBottom",hspc,vspc,iWidth,iHeight,false,content);
+	
+	// zoom box color
+	setLayerBackgroundColor("zoomBoxTop", "#ff0000");
+	setLayerBackgroundColor("zoomBoxLeft", "#ff0000");
+	setLayerBackgroundColor("zoomBoxRight", "#ff0000");
+	setLayerBackgroundColor("zoomBoxBottom", "#ff0000");
+	
+	// glass layer for mouse click handling
+	content = '<img name="pixel" src="images/transparent.gif" width=1 height=1>';
+	createLayer("theTop",hspc,vspc,iWidth,iHeight,true,content);
+
+	setZoomBoxSettings();
+	
+	//document.getElementById("theMap").style = "background-color:#EBEBE8";
+</script>
+</body>
+</html>

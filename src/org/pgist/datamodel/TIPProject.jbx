@@ -1,0 +1,14 @@
+[PropertyInfo]
+footprint,com.esri.sde.sdk.geom.Geometry,false,false, , ,true,<default>
+id,Long,false,false,id,id,true,<default>
+images,java.util.List,false,false,images,images,true,<default>
+name,String,false,false,name,name,true,<default>
+pid,String,false,false,PIN,PIN,true,<default>
+scenarios,java.util.List,false,false,scenarios,scenarios,true,<default>
+title,String,false,false,title,title,true,<default>
+votes,java.util.List,false,false,votes,votes,true,<default>
+[IconNames]
+
+
+
+

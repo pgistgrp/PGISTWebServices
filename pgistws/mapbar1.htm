@@ -1,0 +1,58 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>MapBar Perspective</title>
+<script type="text/javascript" src="map_v1.js"></script>
+</head>
+<body style="margin: 0px;">
+<div id="Layer1" style="position:absolute; left:100px; top:100px; width:640px; height:480px; z-index:0; background-color: #EBEBE8; layer-background-color: #EBEBE8; border: 1px none #000000;"></div>
+<script type="text/javascript" language="JavaScript" >
+  var hspc = 100;
+  var vspc = 100;
+    
+	var sMapProcessor;
+	var sIDProcessor;
+	var sImage;
+	
+	// map size
+	var iWidth=640; //640;
+	var iHeight=480; //454;
+	
+	// map extent.
+	var minx;
+	var maxx;
+	var maxy;
+	var miny;
+
+    content = '<img id="theImage" src="mimemap?so=pgist_cip&w=640&h=480" border="0" hspace=0 vspace=0 border=0 width=' + iWidth + ' height=' + iHeight + '>';
+    createLayer("theMap",hspc,vspc,(parseInt(iWidth)+2),(parseInt(iHeight)+2),true,content);
+    
+    // needed so that pan works
+    clipLayer("theMap",0,0,(parseInt(iWidth)+2),(parseInt(iHeight)+2));
+
+	// Zoom Box
+	content = '<img name="zoomImageTop" src="images/transparent.gif" width=1 height=1>';
+	createLayer("zoomBoxTop",hspc,vspc,iWidth,iHeight,false,content);
+	content = '<img name="zoomImageLeft" src="images/transparent.gif" width=1 height=1>';
+	createLayer("zoomBoxLeft",hspc,vspc,iWidth,iHeight,false,content);
+	content = '<img name="zoomImageRight" src="images/transparent.gif" width=1 height=1>';
+	createLayer("zoomBoxRight",hspc,vspc,iWidth,iHeight,false,content);
+	content = '<img name="zoomImageBottom" src="images/transparent.gif" width=1 height=1>';
+	createLayer("zoomBoxBottom",hspc,vspc,iWidth,iHeight,false,content);
+	
+	// zoom box color
+	setLayerBackgroundColor("zoomBoxTop", "#ff0000");
+	setLayerBackgroundColor("zoomBoxLeft", "#ff0000");
+	setLayerBackgroundColor("zoomBoxRight", "#ff0000");
+	setLayerBackgroundColor("zoomBoxBottom", "#ff0000");
+	
+	// glass layer for mouse click handling
+	content = '<img name="pixel" src="images/transparent.gif" width=1 height=1>';
+	createLayer("theTop",hspc,vspc,iWidth,iHeight,true,content);
+
+	setZoomBoxSettings();
+	
+	document.getElementById("theMap").style = "background-color:#EBEBE8";
+</script>
+</body>
+</html>

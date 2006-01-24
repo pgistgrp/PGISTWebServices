@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://ws.pgist.org" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://ws.pgist.org" xmlns:intf="http://ws.pgist.org" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="http://http.servlet.javax" xmlns:tns2="http://www.w3.org/1999/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.2beta3
+Built on Aug 01, 2004 (05:59:22 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://ws.pgist.org" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://http.servlet.javax"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_tns2_anyType">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:anyType[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://ws.pgist.org"/>
+   <import namespace="http://http.servlet.javax"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="Vector">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="xsd:anyType"/>
+    </sequence>
+   </complexType>
+   <complexType name="mapItem">
+    <sequence>
+     <element name="key" nillable="true" type="xsd:anyType"/>
+     <element name="value" nillable="true" type="xsd:anyType"/>
+    </sequence>
+   </complexType>
+   <complexType name="Map">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="apachesoap:mapItem"/>
+    </sequence>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getGeometryResponse">
+
+      <wsdl:part name="getGeometryReturn" type="apachesoap:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="doGetRequest">
+
+      <wsdl:part name="request" type="xsd:anyType"/>
+
+      <wsdl:part name="response" type="xsd:anyType"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="doPostRequest">
+
+      <wsdl:part name="request" type="tns1:HttpServletRequest"/>
+
+      <wsdl:part name="response" type="tns1:HttpServletResponse"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getScenariosResponse">
+
+      <wsdl:part name="getScenariosReturn" type="impl:ArrayOf_tns2_anyType"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getProjects4ScenRequest">
+
+      <wsdl:part name="scen_id" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="destroyRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="initResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="destroyResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="doPostResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getScenariosRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="doGetResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getGeometryRequest">
+
+      <wsdl:part name="layerName" type="xsd:string"/>
+
+      <wsdl:part name="iDColumn" type="xsd:string"/>
+
+      <wsdl:part name="whereClause" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getProjects4ScenResponse">
+
+      <wsdl:part name="getProjects4ScenReturn" type="impl:ArrayOf_tns2_anyType"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="initRequest">
+
+   </wsdl:message>
+
+   <wsdl:portType name="MICAScenarios">
+
+      <wsdl:operation name="init">
+
+         <wsdl:input message="impl:initRequest" name="initRequest"/>
+
+         <wsdl:output message="impl:initResponse" name="initResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="destroy">
+
+         <wsdl:input message="impl:destroyRequest" name="destroyRequest"/>
+
+         <wsdl:output message="impl:destroyResponse" name="destroyResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="doGet" parameterOrder="request response">
+
+         <wsdl:input message="impl:doGetRequest" name="doGetRequest"/>
+
+         <wsdl:output message="impl:doGetResponse" name="doGetResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="doPost" parameterOrder="request response">
+
+         <wsdl:input message="impl:doPostRequest" name="doPostRequest"/>
+
+         <wsdl:output message="impl:doPostResponse" name="doPostResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getScenarios">
+
+         <wsdl:input message="impl:getScenariosRequest" name="getScenariosRequest"/>
+
+         <wsdl:output message="impl:getScenariosResponse" name="getScenariosResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getProjects4Scen" parameterOrder="scen_id">
+
+         <wsdl:input message="impl:getProjects4ScenRequest" name="getProjects4ScenRequest"/>
+
+         <wsdl:output message="impl:getProjects4ScenResponse" name="getProjects4ScenResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getGeometry" parameterOrder="layerName iDColumn whereClause">
+
+         <wsdl:input message="impl:getGeometryRequest" name="getGeometryRequest"/>
+
+         <wsdl:output message="impl:getGeometryResponse" name="getGeometryResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="MICAScenariosSoapBinding" type="impl:MICAScenarios">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="init">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="initRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="initResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="destroy">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="destroyRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="destroyResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="doGet">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="doGetRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="doGetResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="doPost">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="doPostRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="doPostResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getScenarios">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getScenariosRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getScenariosResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getProjects4Scen">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getProjects4ScenRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getProjects4ScenResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getGeometry">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getGeometryRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getGeometryResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.pgist.org" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="MICAScenarios">
+
+      <wsdl:port binding="impl:MICAScenariosSoapBinding" name="MICAScenarios">
+
+         <wsdlsoap:address location="http://pgistdev.geog.washington.edu:8080/webservices/services/MICAScenarios"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

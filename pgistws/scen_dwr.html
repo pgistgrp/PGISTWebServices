@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>My DWR Test</title>
+  <script type='text/javascript' src='dwr/interface/MICAScenServlet.js'></script>
+
+  <script type='text/javascript' src='dwr/engine.js'></script>
+  <script type='text/javascript' src='dwr/util.js'></script>
+  
+  <script type="text/javascript">
+  function update(){
+  	MICAScenServlet.getScenarios(showScenario);
+  }
+  
+  function showScenario(data){
+    //for(var ss in data){
+	//	alert(data[ss].description);
+	//}
+	alert(data);
+	alert(data.length);
+	alert(data[0]);
+	alert(data[0]['description']);
+	//alert(data[0]['projects'].length);
+  }
+  
+  function showProject(){
+  	MICAScenServlet.getProjects4Scen(handleProjectData, 74);
+  }
+  
+  function handleProjectData(data){
+    //for(var ss in data){
+	//	alert(data[ss].description);
+	//}
+	alert("Total number of projects: " + data.length);
+	alert("Title of the first project: " + data[0]['project_title']);
+	for(i=0; i<data.length; i++)
+		if(data[i]['allCoordinates'] != null)
+			alert(data[i]['allCoordinates']);
+  }
+  </script>
+</head>
+<body>
+
+<div id="more">
+  <input type="button" name="Submit" value="Scenarios" onclick="update()" />
+  <input type="button" name="Submitprj" value="project" onclick="showProject()" />
+</div>
+
+<div id="datadiv">
+  
+</div>
+</body>
+</html>
